@@ -1,5 +1,4 @@
 "use client";
-
 import { motion } from "framer-motion";
 import NavItem from "./NavItem";
 
@@ -40,7 +39,7 @@ const staticNavigationItems: NavigationItem[] = [
     _id: "faq",
     href: "/faq",
     label: "FAQ",
-    hasDropdown: true,
+    hasDropdown: false,
   },
 ];
 
