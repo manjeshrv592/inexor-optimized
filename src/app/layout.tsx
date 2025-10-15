@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Michroma, Raleway } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/layouts/header/Header";
 
 const michroma = Michroma({
   subsets: ["latin"],
@@ -29,6 +30,7 @@ export default function RootLayout({
       <body
         className={`${michroma.variable} ${raleway.variable} bg-[#050505] text-white antialiased`}
       >
+        <Header />
         <main>{children}</main>
       </body>
     </html>
