@@ -1,8 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import NavItem from "./NavItem";
-import { getFirstBlogPostSlug } from "@/lib/sanity/blog";
 
 interface NavigationItem {
   _id?: string;
@@ -15,57 +14,43 @@ interface NavigationProps {
   isOpen: boolean;
   activePagePath?: string | null;
   onNavItemClick?: (href: string) => void;
+  firstBlogSlug?: string | null;
 }
 
-const Navigation: React.FC<NavigationProps> = ({ isOpen }) => {
-  const [navigationItems, setNavigationItems] = useState<NavigationItem[]>([
-    {
-      _id: "resources",
-      href: "/resources/blogs",
-      label: "Resources",
-      hasDropdown: true,
-    },
-    {
-      _id: "services",
-      href: "/services",
-      label: "Services",
-      hasDropdown: true,
-    },
-    {
-      _id: "about",
-      href: "/about",
-      label: "About Us",
-      hasDropdown: false,
-    },
-    {
-      _id: "faq",
-      href: "/faq",
-      label: "FAQ",
-      hasDropdown: false,
-    },
-  ]);
+const Navigation: React.FC<NavigationProps> = ({ isOpen, firstBlogSlug }) => {
+  // Use useMemo to compute navigation items based on firstBlogSlug
+  const navigationItems = useMemo<NavigationItem[]>(() => {
+    const resourcesHref = firstBlogSlug 
+      ? `/resources/blogs/${firstBlogSlug}` 
+      : "/resources/blogs";
 
-  useEffect(() => {
-    const fetchFirstBlogSlug = async () => {
-      try {
-        const firstBlogPost = await getFirstBlogPostSlug();
-        if (firstBlogPost?.slug?.current) {
-          setNavigationItems(prevItems => 
-            prevItems.map(item => 
-              item._id === "resources" 
-                ? { ...item, href: `/resources/blogs/${firstBlogPost.slug.current}` }
-                : item
-            )
-          );
-        }
-      } catch (error) {
-        console.error("Failed to fetch first blog post slug:", error);
-        // Keep default href if fetch fails
-      }
-    };
-
-    fetchFirstBlogSlug();
-  }, []);
+    return [
+      {
+        _id: "resources",
+        href: resourcesHref,
+        label: "Resources",
+        hasDropdown: true,
+      },
+      {
+        _id: "services",
+        href: "/services",
+        label: "Services",
+        hasDropdown: true,
+      },
+      {
+        _id: "about",
+        href: "/about",
+        label: "About Us",
+        hasDropdown: false,
+      },
+      {
+        _id: "faq",
+        href: "/faq",
+        label: "FAQ",
+        hasDropdown: false,
+      },
+    ];
+  }, [firstBlogSlug]);
 
   const displayItems = navigationItems;
 
