@@ -1,6 +1,8 @@
 "use client";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import NavItem from "./NavItem";
+import { getFirstBlogPostSlug } from "@/lib/sanity/blog";
 
 interface NavigationItem {
   _id?: string;
@@ -15,36 +17,57 @@ interface NavigationProps {
   onNavItemClick?: (href: string) => void;
 }
 
-// Static navigation data
-const staticNavigationItems: NavigationItem[] = [
-  {
-    _id: "resources",
-    href: "/resources",
-    label: "Resources",
-    hasDropdown: true,
-  },
-  {
-    _id: "services",
-    href: "/services",
-    label: "Services",
-    hasDropdown: true,
-  },
-  {
-    _id: "about",
-    href: "/about",
-    label: "About Us",
-    hasDropdown: false,
-  },
-  {
-    _id: "faq",
-    href: "/faq",
-    label: "FAQ",
-    hasDropdown: false,
-  },
-];
-
 const Navigation: React.FC<NavigationProps> = ({ isOpen }) => {
-  const displayItems = staticNavigationItems;
+  const [navigationItems, setNavigationItems] = useState<NavigationItem[]>([
+    {
+      _id: "resources",
+      href: "/resources/blogs",
+      label: "Resources",
+      hasDropdown: true,
+    },
+    {
+      _id: "services",
+      href: "/services",
+      label: "Services",
+      hasDropdown: true,
+    },
+    {
+      _id: "about",
+      href: "/about",
+      label: "About Us",
+      hasDropdown: false,
+    },
+    {
+      _id: "faq",
+      href: "/faq",
+      label: "FAQ",
+      hasDropdown: false,
+    },
+  ]);
+
+  useEffect(() => {
+    const fetchFirstBlogSlug = async () => {
+      try {
+        const firstBlogPost = await getFirstBlogPostSlug();
+        if (firstBlogPost?.slug?.current) {
+          setNavigationItems(prevItems => 
+            prevItems.map(item => 
+              item._id === "resources" 
+                ? { ...item, href: `/resources/blogs/${firstBlogPost.slug.current}` }
+                : item
+            )
+          );
+        }
+      } catch (error) {
+        console.error("Failed to fetch first blog post slug:", error);
+        // Keep default href if fetch fails
+      }
+    };
+
+    fetchFirstBlogSlug();
+  }, []);
+
+  const displayItems = navigationItems;
 
   return (
     <motion.nav
