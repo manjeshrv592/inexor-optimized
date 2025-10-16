@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "./button";
-import { useTransitionRouter } from "next-view-transitions";
+import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { Phone } from "lucide-react";
 
@@ -12,7 +12,7 @@ interface ContactUsButtonProps {
 }
 
 const ContactUsButton: React.FC<ContactUsButtonProps> = ({ className, children }) => {
-  const router = useTransitionRouter();
+  const router = useRouter();
   const pathname = usePathname();
   
   // State to track if user has scrolled past the hero section
@@ -50,9 +50,9 @@ const ContactUsButton: React.FC<ContactUsButtonProps> = ({ className, children }
       // Set navigation source for animation direction
       sessionStorage.setItem('navigationSource', 'contact-button');
       
-      // Always use transition router to prevent page reload
-      // Animations will only show when transitioning from/to root due to PageTransition component logic
-      console.log("✨ Using transition router for contact navigation");
+      // Always use router to prevent page reload
+      // Standard Next.js navigation without transitions
+      console.log("✨ Using standard router for contact navigation");
       requestAnimationFrame(() => {
         router.push(targetHref);
       });
